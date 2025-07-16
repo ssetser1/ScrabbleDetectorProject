@@ -30,9 +30,9 @@ def install_requirements():
         print(f"Installing {package}...")
         try:
             subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-            print(f"✓ {package} installed successfully")
+            print(f"{package} installed successfully")
         except subprocess.CalledProcessError:
-            print(f"✗ Failed to install {package}")
+            print(f"Failed to install {package}")
             return False
     
     return True
@@ -59,9 +59,9 @@ def verify_installation():
     for package, name in packages:
         try:
             __import__(package)
-            print(f"✓ {name} imported successfully")
+            print(f"{name} imported successfully")
         except ImportError:
-            print(f"✗ {name} import failed")
+            print(f"{name} import failed")
             all_good = False
     
     return all_good
@@ -91,9 +91,9 @@ def check_dataset():
             else:
                 files = list(Path(path).glob("*.txt"))
             
-            print(f"✓ {path}: {len(files)} files")
+            print(f"{path}: {len(files)} files")
         else:
-            print(f"✗ {path}: Not found")
+            print(f"{path}: Not found")
             all_good = False
     
     return all_good
@@ -104,21 +104,21 @@ def main():
     
     # Install requirements
     if not install_requirements():
-        print("\n✗ Failed to install some packages. Please check your internet connection and try again.")
+        print("\nFailed to install some packages. Please check your internet connection and try again.")
         sys.exit(1)
     
     # Verify installation
     if not verify_installation():
-        print("\n✗ Some packages failed to import. Please try reinstalling.")
+        print("\nSome packages failed to import. Please try reinstalling.")
         sys.exit(1)
     
     # Check dataset
     if not check_dataset():
-        print("\n✗ Dataset structure is incomplete. Please ensure all required directories and files exist.")
+        print("\nDataset structure is incomplete. Please ensure all required directories and files exist.")
         sys.exit(1)
     
     print("\n" + "=" * 50)
-    print("✓ SETUP COMPLETED SUCCESSFULLY!")
+    print("SETUP COMPLETED SUCCESSFULLY!")
     print("=" * 50)
     print("\nYou can now run the pipeline:")
     print("  python run_pipeline.py")

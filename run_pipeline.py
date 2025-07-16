@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 import argparse
 import time
+from ultralytics import YOLO
 
 def run_data_preparation():
     """Run the data preparation step"""
@@ -49,10 +50,10 @@ def run_training(epochs=50, model_size='n'):
         print(f"Training YOLOv8{model_size} model for {epochs} epochs...")
         trainer.train_model(epochs=epochs)
         
-        print("✓ Model training completed successfully!")
+        print("Model training completed successfully!")
         return True
     except Exception as e:
-        print(f"✗ Model training failed: {e}")
+        print(f"Model training failed: {e}")
         return False
 
 def run_evaluation():
@@ -94,7 +95,7 @@ def run_inference_test(test_image=None):
         detector = ScrabbleDetector()
         
         if not detector.load_model():
-            print("✗ Failed to load model")
+            print("Failed to load model")
             return False
         
         # Use a test image if provided, otherwise use first available test image
@@ -103,7 +104,7 @@ def run_inference_test(test_image=None):
             if test_images:
                 test_image = str(test_images[0])
             else:
-                print("✗ No test images found")
+                print("No test images found")
                 return False
         
         print(f"Testing on image: {test_image}")
@@ -122,12 +123,12 @@ def run_inference_test(test_image=None):
             if len(detections) > 10:
                 print(f"  ... and {len(detections) - 10} more")
         else:
-            print("✗ No tiles detected")
+            print("No tiles detected")
         
-        print("✓ Inference testing completed!")
+        print("Inference testing completed!")
         return True
     except Exception as e:
-        print(f"✗ Inference testing failed: {e}")
+        print(f"Inference testing failed: {e}")
         return False
 
 def check_prerequisites():
@@ -138,37 +139,37 @@ def check_prerequisites():
     
     # Check if ImageData directory exists
     if not Path("ImageData").exists():
-        print("✗ ImageData directory not found")
+        print("ImageData directory not found")
         return False
     
     # Check if real images exist
     real_images = list(Path("ImageData/RealPictures").rglob("*.jpg"))
     if not real_images:
-        print("✗ No real images found in ImageData/RealPictures")
+        print("No real images found in ImageData/RealPictures")
         return False
     
     # Check if synthetic images exist
     synthetic_images = list(Path("ImageData/SyntheticPictures").rglob("*.jpg"))
     if not synthetic_images:
-        print("✗ No synthetic images found in ImageData/SyntheticPictures")
+        print("No synthetic images found in ImageData/SyntheticPictures")
         return False
     
-    print(f"✓ Found {len(real_images)} real images")
-    print(f"✓ Found {len(synthetic_images)} synthetic images")
+    print(f"Found {len(real_images)} real images")
+    print(f"Found {len(synthetic_images)} synthetic images")
     
     # Check if required packages are installed
     try:
         import ultralytics
-        print("✓ Ultralytics installed")
+        print("Ultralytics installed")
     except ImportError:
-        print("✗ Ultralytics not installed. Run: pip install ultralytics")
+        print("Ultralytics not installed. Run: pip install ultralytics")
         return False
     
     try:
         import cv2
-        print("✓ OpenCV installed")
+        print("OpenCV installed")
     except ImportError:
-        print("✗ OpenCV not installed. Run: pip install opencv-python")
+        print("OpenCV not installed. Run: pip install opencv-python")
         return False
     
     return True
@@ -202,7 +203,7 @@ def main():
     
     # Check prerequisites
     if not check_prerequisites():
-        print("\n✗ Prerequisites not met. Please fix the issues above.")
+        print("\nPrerequisites not met. Please fix the issues above.")
         sys.exit(1)
     
     success_count = 0
@@ -251,7 +252,7 @@ def main():
     print(f"Total time: {duration:.1f} seconds")
     
     if success_count == total_steps:
-        print("✓ All steps completed successfully!")
+        print("All steps completed successfully!")
         print("\nNext steps:")
         print("1. Check the training results in scrabble_detector/yolov8_scrabble/")
         print("2. Test the model on your own images:")
@@ -259,7 +260,7 @@ def main():
         print("3. Export the model for deployment:")
         print("   python train_model.py (and modify to export)")
     else:
-        print("✗ Some steps failed. Check the output above for details.")
+        print("Some steps failed. Check the output above for details.")
         sys.exit(1)
 
 if __name__ == "__main__":

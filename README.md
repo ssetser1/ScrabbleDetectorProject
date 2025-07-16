@@ -13,14 +13,20 @@ A computer vision system that detects and recognizes Scrabble tiles from images 
 ## Dataset
 
 The project uses a combination of:
-- **Real Images**: 30+ manually labeled Scrabble board photos
-- **Synthetic Images**: 100+ computer-generated Scrabble boards
-- **Total**: ~130 training images with comprehensive annotations
+- **Real Images**: 35 manually labeled Scrabble board photos
+- **Synthetic Images**: 100 computer-generated Scrabble boards
+- **Total**: 135 training images with comprehensive annotations
+
+### Current Dataset Statistics:
+- **Train**: 113 images, 10,289 annotations (avg: 91.1 per image)
+- **Validation**: 20 images, 1,835 annotations (avg: 91.8 per image)  
+- **Test**: 1 image, 93 annotations (avg: 93.0 per image)
+- **Classes**: 26 letters (A-Z)
 
 ## Project Structure
 
 ```
-ScrabbleDetector/
+ScrabbleDetectorProject/
 ├── ImageData/
 │   ├── RealPictures/          # Real Scrabble board images
 │   │   ├── train/
@@ -30,11 +36,14 @@ ScrabbleDetector/
 │       ├── images/
 │       └── labels/
 ├── dataset/                   # Combined dataset (created by data_preparation.py)
-├── scrabble_detector/         # Training outputs
+├── scrabble_detector/         # Training outputs and model weights
 ├── data_preparation.py        # Dataset preparation script
 ├── train_model.py            # Model training script
 ├── inference.py              # Inference and detection script
+├── run_pipeline.py           # Complete pipeline script
+├── setup.py                  # Setup and installation script
 ├── requirements.txt          # Python dependencies
+├── .gitignore               # Git ignore file
 └── README.md                 # This file
 ```
 
@@ -43,22 +52,53 @@ ScrabbleDetector/
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd ScrabbleDetector
+   cd ScrabbleDetectorProject
    ```
 
-2. **Install dependencies**:
+2. **Set up virtual environment (recommended)**:
+   ```bash
+   python -m venv venv
+   # On Windows (CMD):
+   venv\Scripts\activate
+   # On Windows (Git Bash/PowerShell):
+   source venv/Scripts/activate
+   # On Linux/Mac:
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
+   Or use the setup script:
+   ```bash
+   python setup.py
+   ```
 
-3. **Verify installation**:
+4. **Verify installation**:
    ```bash
    python -c "import ultralytics; print('Ultralytics installed successfully')"
    ```
 
 ## Quick Start
 
-### 1. Prepare Your Dataset
+### Option 1: Run Complete Pipeline
+
+Run the entire pipeline (data preparation, training, evaluation, and inference):
+
+```bash
+python run_pipeline.py
+```
+
+This will:
+- Prepare the dataset from `ImageData/`
+- Train a YOLOv8 model
+- Evaluate the model
+- Test inference on a sample image
+
+### Option 2: Run Individual Steps
+
+#### 1. Prepare Your Dataset
 
 First, organize and validate your dataset:
 
@@ -73,7 +113,7 @@ This script will:
 - Generate dataset statistics
 - Create `dataset.yaml` configuration file
 
-### 2. Train the Model
+#### 2. Train the Model
 
 Train a YOLOv8 model on your Scrabble dataset:
 
@@ -86,7 +126,7 @@ Training parameters can be adjusted in the script:
 - `imgsz`: Input image size (default: 640)
 - `batch_size`: Batch size (default: 16)
 
-### 3. Run Inference
+#### 3. Run Inference
 
 Detect Scrabble tiles in new images:
 
@@ -102,6 +142,18 @@ Additional options:
 
 ## Usage Examples
 
+### Pipeline Options
+```bash
+# Run complete pipeline
+python run_pipeline.py
+
+# Run with custom parameters
+python run_pipeline.py --epochs 100 --model-size s
+
+# Skip certain steps
+python run_pipeline.py --skip-training --skip-evaluation
+```
+
 ### Basic Detection
 ```bash
 python inference.py --image test_board.jpg
@@ -115,6 +167,16 @@ python inference.py --image test_board.jpg --output detected_board.jpg --results
 ### Custom Model
 ```bash
 python inference.py --model scrabble_detector/yolov8_scrabble/weights/best.pt --image test_board.jpg
+```
+
+### Test on Test Set
+```bash
+python test_on_testset.py
+```
+
+### Plot Training Curves
+```bash
+python test_plotting.py
 ```
 
 ## Model Architecture
@@ -138,9 +200,10 @@ The system uses **YOLOv8** (You Only Look Once version 8) with:
 ### Training Parameters
 - **Optimizer**: AdamW
 - **Learning Rate**: 0.01 with cosine annealing
-- **Batch Size**: 16 (adjust based on GPU memory)
+- **Batch Size**: 12-16 (adjust based on GPU memory)
 - **Epochs**: 50-100 (with early stopping)
 - **Loss Function**: CIoU + BCE
+- **Model Variants**: YOLOv8n (nano), YOLOv8s (small), YOLOv8m (medium)
 
 ### Validation
 - **Metrics**: mAP50, mAP50-95, Precision, Recall
@@ -197,6 +260,16 @@ With the current dataset (~130 images):
    - Reduce image resolution
    - Use smaller model variant
 
+4. **"YOLO is not defined" Error**
+   - Make sure you're in the virtual environment
+   - Reinstall ultralytics: `pip install ultralytics`
+   - Check that the import is present in scripts
+
+5. **Missing Model Files**
+   - Run training first: `python train_model.py`
+   - Check that `scrabble_detector/` folder exists
+   - Verify model path in inference scripts
+
 ### Debugging
 
 Enable verbose output during training:
@@ -205,8 +278,18 @@ results = model.train(..., verbose=True)
 ```
 
 Check dataset statistics:
-```python
+```bash
 python data_preparation.py
+```
+
+Verify installation:
+```bash
+python setup.py
+```
+
+Check prerequisites:
+```bash
+python run_pipeline.py --skip-data-prep --skip-training --skip-evaluation --skip-inference
 ```
 
 ## Export and Deployment

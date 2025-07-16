@@ -16,7 +16,7 @@ class ScrabbleTrainer:
         print("Initializing YOLOv8 model...")
         
         # Load a pre-trained YOLOv8 model
-        self.model = YOLO('yolov8s.pt')  # Use small model for better accuracy
+        self.model = YOLO('yolov8s.pt')  
         
         print(f"Training model for {epochs} epochs...")
         print(f"Dataset: {self.dataset_path}")
